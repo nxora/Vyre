@@ -1,5 +1,5 @@
-import Container from "../componenets/Container";
-import ThemeToggle from "../componenets/ThemeToggle";
+import Container from "@/componenets/Container";
+import ThemeToggle from "@/componenets/ThemeToggle";
 import Link from "next/link";
 
 export default function HomePage() {
