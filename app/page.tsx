@@ -2,7 +2,6 @@ import Container from "./componenets/Container";
 import ThemeToggle from "./componenets/ThemeToggle";
 import Link from "next/link";
 
-
 export default function HomePage() {
 return (
 <Container>
@@ -11,18 +10,9 @@ return (
 <ThemeToggle />
 </div>
 
+<p className="text-lg opacity-80 mb-8"> I build, I code, I tell stories.</p>
 
-<p className="text-lg opacity-80 mb-8">
-I build, I code, I tell stories.
-</p>
-
-
-<Link
-href="/blog"
-className="underline text-primary hover:opacity-80"
->
-Read the blog →
-</Link>
+<Link href="/blog" className="underline text-primary hover:opacity-80"> Read the blog → </Link>
 </Container>
 );
 }

@@ -4,30 +4,25 @@
 --primary: #7c3aed;
 }
 
-
 .dark {
 --background: #0c0c0c;
 --foreground: #e3e3e3;
 --primary: #a855f7;
 }
 
-
 body {
 background: var(--background);
 color: var(--foreground);
 }
-
 
 /* Tailwind variable hooks */
 .bg-background {
 background: var(--background);
 }
 
-
 .text-foreground {
 color: var(--foreground);
 }
-
 
 .text-primary {
 color: var(--primary);

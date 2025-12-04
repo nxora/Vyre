@@ -12,14 +12,7 @@ const slug = file.replace(".md", "");
 const title = slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
 
-return {
-slug,
-title,
-description: "A Vyre post.",
-};
-});
-}
-
+return {slug, title, description: "A Vyre post."}});}
 
 export function getPostBySlug(slug: string) {
 return {
