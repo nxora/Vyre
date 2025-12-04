@@ -1,13 +1,13 @@
 @import "tailwindcss";:root {
 --background: #ffffff;
 --foreground: #111111;
---primary: #7c3aed;
+--primary: #000;
 }
 
 .dark {
 --background: #0c0c0c;
 --foreground: #e3e3e3;
---primary: #a855f7;
+--primary: #f7f1f1e1;
 }
 
 body {
@@ -15,7 +15,6 @@ background: var(--background);
 color: var(--foreground);
 }
 
-/* Tailwind variable hooks */
 .bg-background {
 background: var(--background);
 }

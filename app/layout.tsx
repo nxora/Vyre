@@ -1,7 +1,6 @@
- import "./globals.css";
+import "./globals.css";
 import { ThemeProvider } from "./theme-provider";
 import type { Metadata } from "next";
-
 
 export const metadata: Metadata = {
 title: "Vyre",
