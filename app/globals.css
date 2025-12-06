@@ -27,6 +27,26 @@ color: var(--foreground);
 color: var(--primary);
 }
 
+/* Post Style */
+
+.medium-like-editor {
+  @apply font-serif text-gray-700 dark:text-gray-200;
+  line-height: 1.6;
+}
+
+.medium-like-editor h2,
+.medium-like-editor h3 {
+  @apply mt-10 mb-4 font-bold;
+}
+
+.medium-like-editor p {
+  @apply mb-5;
+}
+
+.medium-like-editor img,
+.medium-like-editor iframe {
+  @apply my-6 mx-auto block rounded-lg max-w-full h-auto;
+}
 hr{
     color: var(--primary);
 }

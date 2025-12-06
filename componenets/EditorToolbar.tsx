@@ -1,56 +1,58 @@
+"use client"
+
+import {
+  FaBold,
+  FaItalic,
+  FaImage,
+  FaQuoteLeft,
+  FaYoutube,
+} from "react-icons/fa"
+
 export default function EditorToolbar({ editor }: { editor: any }) {
   if (!editor) return null
 
+  const button =
+    "p-2 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-800"
+
+  const uploadImage = () => {
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = "image/*"
+    input.onchange = () => {
+      const file = input.files?.[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        editor.chain().focus().setImage({ src: reader.result }).run()
+      }
+      reader.readAsDataURL(file)
+    }
+    input.click()
+  }
+
+  const addYoutube = () => {
+    const url = prompt("YouTube link")
+    if (!url) return
+    editor.commands.setYoutubeVideo({ src: url })
+  }
+
   return (
-    <div className="flex gap-2 border-b pb-2 mb-4 text-sm">
-      <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? 'font-bold' : ''}>B</button>
-
-      <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? 'italic' : ''}>I</button>
-
-      <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>
-        • List
+    <div className="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-black/70 border-b px-4 py-2 flex gap-2 justify-center">
+      <button className={button} onClick={() => editor.chain().focus().toggleBold().run()}>
+        <FaBold />
       </button>
-
-      <button type="button" onClick={() => {
-        const url = prompt("Image URL")
-        if (url) editor.chain().focus().setImage({ src: url }).run()
-      }}>
-        Image
+      <button className={button} onClick={() => editor.chain().focus().toggleItalic().run()}>
+        <FaItalic />
       </button>
-      <button
-  type="button"
-  onClick={() =>
-    editor.chain().focus().toggleHeading({ level: 2 }).run()
-  }
->
-  H2
-</button>
-
-<button
-  type="button"
-  onClick={() =>
-    editor.chain().focus().toggleBlockquote().run()
-  }
->
-  ❝ Quote
-</button>
-
-<button
-  type="button"
-  onClick={() => {
-    const url = prompt("YouTube URL")
-    if (url)
-      editor.commands.setYoutubeVideo({
-        src: url,
-      })
-  }}
->
-  ▶ Video
-</button>
-
-
+      <button className={button} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+        <FaQuoteLeft />
+      </button>
+      <button className={button} onClick={uploadImage}>
+        <FaImage />
+      </button>
+      <button className={button} onClick={addYoutube}>
+        <FaYoutube />
+      </button>
     </div>
   )
 }
