@@ -1,22 +1,22 @@
-// app/create-post/page.tsx
-"use client" // must be first
+// app/create-post/CreatePostEditor.tsx
+"use client"
 
-import React, { useState } from "react"
-import { EditorContent, useEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import Image from "@tiptap/extension-image"
-import Link from "@tiptap/extension-link"
-import { useSession } from "next-auth/react"
-import slugify from "slugify"
+import React, { useState } from 'react'
+import { EditorContent, useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
+import Link from '@tiptap/extension-link'
+import { useSession } from 'next-auth/react'
+import slugify from 'slugify'
 
-export default function CreatePostPage() {
+export default function CreatePostEditor() {
   const { data: session } = useSession()
-  const [title, setTitle] = useState("")
-  const [message, setMessage] = useState("")
+  const [title, setTitle] = useState('')
+  const [message, setMessage] = useState('')
 
   const editor = useEditor({
     extensions: [StarterKit, Image, Link],
-    content: "",
+    content: '',
   })
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -65,4 +65,3 @@ export default function CreatePostPage() {
     </div>
   )
 }
-
