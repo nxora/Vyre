@@ -26,3 +26,7 @@ color: var(--foreground);
 .text-primary {
 color: var(--primary);
 }
+
+hr{
+    color: var(--primary);
+}
