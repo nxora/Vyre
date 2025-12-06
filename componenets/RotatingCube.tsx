@@ -1,24 +1,29 @@
 "use client"
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { CubeCamera, Icosahedron, Sphere, Torus } from "@react-three/drei" // or Torus if you prefer
-import { useRef, useEffect } from "react"
+import { Icosahedron } from "@react-three/drei"
+import { useRef, useEffect, useState } from "react"
 import * as THREE from "three"
 
 function OrbMesh() {
   const mesh = useRef<THREE.Mesh>(null!)
   const { pointer } = useThree()
+  const [primaryColor, setPrimaryColor] = useState("#000000")
 
-  // Subtle auto-rotation
-  useFrame((_, delta) => {
+   useEffect(() => {
+    const root = getComputedStyle(document.documentElement)
+    const color = root.getPropertyValue('--primary').trim() || '#000'
+    setPrimaryColor(color)
+  }, [])
+
+   useFrame((_, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y += delta * 0.2
-      mesh.current.rotation.x += delta * 0.1
+      mesh.current.rotation.y += delta * 1.5  
+      mesh.current.rotation.x += delta * 0.8
     }
   })
 
-  // Mouse parallax effect
-  useEffect(() => {
+   useEffect(() => {
     if (!mesh.current) return
     const x = pointer.x * 0.1
     const y = -pointer.y * 0.1
@@ -27,14 +32,12 @@ function OrbMesh() {
   }, [pointer])
 
   return (
-    <Icosahedron  ref={mesh}>
-      <meshStandardMaterial
-        color="#7c3aed"
-        emissive="#7c3aed"
-        emissiveIntensity={3.8}
-        roughness={5.2}
-        metalness={9.5}
-        
+    <Icosahedron ref={mesh} args={[0.8, 0]} scale={1.5}>
+      <meshStandardMaterial 
+        emissive={primaryColor}
+        emissiveIntensity={0.2}    
+        roughness={0.7}           
+        metalness={1.7}            
       />
     </Icosahedron>
   )
@@ -48,7 +51,6 @@ export default function RotatingCube() {
         camera={{ position: [0, 0, 4] }}
         style={{ pointerEvents: 'auto' }}
       >
-        {/* Soft ambient + directional light */}
         <ambientLight intensity={1.2} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
         <OrbMesh />

@@ -1,5 +1,3 @@
-// app/page.tsx
-
 import Container from "@/componenets/Container";
 import Rotate from "@/componenets/Rotate";
 import ThemeToggle from "@/componenets/ThemeToggle";

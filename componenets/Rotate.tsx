@@ -1,5 +1,3 @@
-// componenets/Rotate.tsx
-
 "use client"
 
 import { Canvas, useFrame } from "@react-three/fiber"
@@ -29,14 +27,13 @@ function OrbMesh() {
 }
 
 export default function Rotate() {
-  return (
-    // ✅ Full viewport, fixed, behind everything
+  return ( 
     <div className="fixed inset-0 -z-10">
       <Canvas
         camera={{ position: [0, 0, 4] }}
         style={{ 
           background: 'transparent',
-          pointerEvents: 'none' // ⚠️ Critical: don't block mouse!
+          pointerEvents: 'none'  
         }}
       >
         <ambientLight intensity={1.5} />

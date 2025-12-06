@@ -14,8 +14,7 @@ const techIcons = [
   { name: 'Node', color: '#339933' },
 ]
 
-// ✅ New inner component that lives INSIDE Canvas
-function RotatingOrb() {
+ function RotatingOrb() {
   const groupRef = useRef<Group>(null)
   const [time, setTime] = useState(0)
 
@@ -48,15 +47,13 @@ function RotatingOrb() {
   )
 }
 
-// ✅ Main component — only renders Canvas
-export default function Orb() {
+ export default function Orb() {
   return (
     <Canvas className="w-32 h-32" camera={{ position: [0, 0, 5], fov: 50 }}>
       <ambientLight intensity={Math.PI} />
       <pointLight position={[10, 10, 10]} />
 
-      {/* ✅ Now RotatingOrb is inside Canvas → useFrame works */}
-      <RotatingOrb />
+       <RotatingOrb />
 
       <OrbitControls enableZoom={false} enablePan={false} />
     </Canvas>
