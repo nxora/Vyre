@@ -1,3 +1,4 @@
+//app/blog/page.tsx
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { getAllPosts } from "@/lib/posts"
@@ -34,7 +35,7 @@ export default async function Page() {
           )}
 
           {posts.map((post) => (
-            <PostCard key={post._id.toString()} post={post} />
+            <PostCard key={post._id.toString()} post={post} />//post is possibly null
           ))}
         </div>
 
