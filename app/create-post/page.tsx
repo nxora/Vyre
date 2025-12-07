@@ -51,7 +51,7 @@ export default function CreatePostPage() {
       <h1>Enter your title...</h1> 
       <p>Write your subtitle here — optional.</p>
       <p><br></p>
-    `, 
+    `, //could this be the probem
     immediatelyRender: false,
   })
 

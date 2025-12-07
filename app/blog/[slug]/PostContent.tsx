@@ -3,8 +3,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { SerializedPost } from "@/lib/posts"; // post is declared locally but its not exported
-
+ 
 interface PostContentProps {
   post: any;
   authorName: string;

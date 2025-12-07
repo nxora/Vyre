@@ -18,12 +18,12 @@ export interface SerializedPost {
 function serializePost(post: any): SerializedPost | null {
   if (!post) return null;
    let processedContent = post.content;
-  if (typeof post.content === 'string') {
-    processedContent = post.content.replace(
-      /<img([^>]*?)>/g,
-      '<img$1 class="mx-auto my-6 max-w-full rounded-lg shadow-md" />'
-    );
-  }
+//   if (typeof post.content === 'string') {
+//     processedContent = post.content.replace(
+//       /<img([^>]*?)>/g,
+//       '<img$1 class="mx-auto my-6 max-w-full rounded-lg shadow-md" />'
+//     );
+//   }
   return {
     _id: post._id.toString(),
     title: post.title,
@@ -64,24 +64,37 @@ export async function createPost(data: SerializedPost) {
   await connectDB();
 
   const sanitizedContent = sanitizeHtml(data.content, {
-    allowedTags: [
-        'h1', 'h2', 'h3', 'p', 'br', 'img', 'a', 'ul', 'ol', 'li', 'blockquote',
-      'strong', 'em', 'u', 's', 'hr', 'iframe', 'div', 'span', 'code', 'pre'
-    ],
-    allowedAttributes: {
-      a: ['href', 'target', 'rel'],
-      img: ['src', 'alt', 'width', 'height', 'class'],
-      iframe: ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
-      div: ['class'],
-      span: ['class'],
-      p: ['class'],
-      h1: ['class'],
-      h2: ['class'],
-      h3: ['class'],
-    },
-    allowedSchemes: ['http', 'https', 'mailto', 'tel'],
-    allowVulnerableTags: false,
-  })
+  allowedTags: [
+    'h1', 'h2', 'h3', 'p', 'br', 'img', 'a', 'ul', 'ol', 'li', 'blockquote',
+    'strong', 'em', 'u', 's', 'hr', 'iframe', 'div', 'span', 'code', 'pre'
+  ],
+  allowedAttributes: {
+    a: ['href', 'target', 'rel'],
+    img: ['src', 'alt', 'width', 'height', 'class'],
+    iframe: ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
+    div: ['class'],
+    span: ['class'],
+    p: ['class'],
+    h1: ['class'],
+    h2: ['class'],
+    h3: ['class'],
+  },
+  allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+  allowVulnerableTags: false,
+
+  // ✅ ADD THIS: Transform all <img> tags to include your desired classes
+  transformTags: {
+    img: (tagName, attribs) => {
+      return {
+        tagName: 'img',
+        attribs: {
+          ...attribs,
+          class: `${attribs.class || ''} mx-auto my-6 max-w-full rounded-lg shadow-md`.trim()
+        }
+      };
+    }
+  }
+});
   const post = await Post.create({...data, content: sanitizedContent});
   return post.toObject(); // optional, but consistent
 }
