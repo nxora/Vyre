@@ -1,81 +1,58 @@
-"use client";
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import React from 'react';
+"use client"
+import Link from "next/link"
+import { motion } from "framer-motion"
 
-function extractTextPreview(html?: string, length = 120) {
-  if (!html) return '';
-  return html
-    .replace(/<[^>]*>/g, '')
-    .slice(0, length)
-    .trim();
+function stripHtml(html: string, length = 140) {
+  return html.replace(/<[^>]*>/g, "").slice(0, length)
 }
 
-function extractFirstImageUrl(html?: string): string | null {
-  if (!html) return null;
-  const imgMatch = html.match(/<img[^>]+src="([^">]+)"/);
-  return imgMatch ? imgMatch[1] : null;
+function extractImage(html: string): string | null {
+  const match = html.match(/<img[^>]+src="([^">]+)"/)
+  return match ? match[1] : null
 }
 
-interface Author {
-  _id: string;
-  username: string;
-}
-
-interface Post {
-  _id: string;
-  title: string;
-  slug: string;
-  content: string;
-  createdAt: string; // ISO string
-  authorId: Author | null;
-}
-
-function PostCard({ post }: { post: Post }) {
-  const imageUrl = extractFirstImageUrl(post.content);
-  const previewText = extractTextPreview(post.content, 100);
-  const authorName = post.authorId?.username || 'Anonymous';
-  const formattedDate = new Date(post.createdAt).toLocaleDateString();
+export default function PostCard({ post }: { post: any }) {
+  const preview = stripHtml(post.content)
+  const image = extractImage(post.content)
 
   return (
-    <motion.div
-      whileHover={{ y: -6, scale: 1.015 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 14 }}
-      className="group overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-linear-to-br from-white/60 to-white/30 dark:from-gray-900/60 dark:to-gray-900/30 backdrop-blur-sm shadow-sm hover:shadow-xl transition-all duration-300"
+    <motion.article
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ x: 6 }}
+      transition={{ duration: 0.35 }}
+      className="relative border-l border-neutral-300/40 dark:border-neutral-700/40 pl-6 py-6 group"
     >
       <Link href={`/blog/${post.slug}`} className="block">
-        {imageUrl ? (
-          <div className="relative aspect-video w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-            <img
-              src={imageUrl}
-              alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-            />
-          </div>
-        ) : (
-          <div className="h-32 flex items-center justify-center bg-linear-to-r from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900">
-            <span className="text-neutral-400 text-sm">No image</span>
-          </div>
-        )}
+      
+        {/* TITLE */}
+        <h2 className="text-2xl font-extrabold tracking-tight leading-tight mb-2 
+          group-hover:text-primary transition-colors">
+          {post.title}
+        </h2>
 
-        <div className="p-5">
-          <h3 className="text-xl font-bold mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
-            {post.title}
-          </h3>
-          {previewText && (
-            <p className="text-sm opacity-85 mb-3 line-clamp-2 text-foreground">
-              {previewText}
-            </p>
-          )}
-          <div className="flex justify-between items-center text-xs text-neutral-500 dark:text-neutral-400">
-            <span>By {authorName}</span>
-            <span>{formattedDate}</span>
-          </div>
+        {/* PREVIEW */}
+        <p className="max-w-2xl text-sm opacity-75 leading-relaxed">
+          {preview}…
+        </p>
+
+        {/* META */}
+        <div className="mt-3 text-xs opacity-50 flex gap-4 uppercase tracking-wider">
+          <span>{post.authorId?.username ?? "Anonymous"}</span>
+          <span>{new Date(post.createdAt).getFullYear()}</span>
         </div>
       </Link>
-    </motion.div>
-  );
-}
 
-export default PostCard;
+      {/* IMAGE – subtle + optional */}
+      {image && (
+        <img
+          src={image}
+          alt=""
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-32 h-20 object-cover 
+          opacity-0 group-hover:opacity-60 transition-opacity duration-300
+          hidden md:block"
+        />
+      )}
+    </motion.article>
+  )
+}

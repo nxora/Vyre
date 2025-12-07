@@ -17,7 +17,7 @@ export default async function Page() {
 
   return (
     <>
-      <Rotate />
+      {/* <Rotate /> */}
 
       <Container className="relative z-10 p-6 bg-white/80 dark:bg-gray-900/80 rounded-xl backdrop-blur-sm">
         <div className="flex justify-between items-center mb-8">
