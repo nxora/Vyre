@@ -11,10 +11,11 @@ import { notFound } from "next/navigation"
 export default async function UserProfile({
   params,
 }: {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }) {
+      const { username } = await params  
   const session = await getServerSession(authOptions)
-  const user = await getUserByUsername(params.username)
+  const user = await getUserByUsername(username)
 
   if (!user) notFound()
 
