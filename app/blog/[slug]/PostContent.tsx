@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, useInView } from "framer-motion"
+import Comments from "@/componenets/Comment"
 
 interface PostContentProps {
   post: any
@@ -12,72 +13,150 @@ interface PostContentProps {
   nextPost: any
 }
 
-export default function PostContent({ post, authorName, formattedDate, prevPost, nextPost }: PostContentProps) {
-  if (!post) return null
+// Helper: Split content into blocks and wrap each in a motion div
+const AnimatedContent = ({ htmlString }: { htmlString: string }) => {
+  // Parse HTML string into DOM-like nodes (safely)
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlString, "text/html")
+  const body = doc.body
+
+  // Extract block-level elements (p, h2, h3, ul, ol, blockquote, etc.)
+  const blockTags = ["p", "h2", "h3", "h4", "ul", "ol", "blockquote", "pre", "figure"]
+  const blocks = Array.from(body.children).filter(el =>
+    blockTags.includes(el.tagName.toLowerCase())
+  )
 
   return (
-    <motion.article
-      className="max-w-3xl mx-auto px-4 prose dark:prose-invert prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-iframe:rounded-xl prose-iframe:shadow-lg"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      {/* Title */}
-      <motion.h1
-        className="font-serif text-5xl md:text-6xl font-extrabold mb-4 leading-tight"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-      >
-        {post.title}
-      </motion.h1>
+    <>
+      {blocks.map((block, index) => {
+        const key = `${block.tagName}-${index}`
+        const html = block.outerHTML
 
-      {/* Subtitle */}
-      {post.subtitle && (
-        <motion.h2
-          className="font-serif text-2xl text-gray-600 dark:text-gray-300 mb-12"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          {post.subtitle}
-        </motion.h2>
-      )}
+        return (
+          <motion.div
+            key={key}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: index * 0.05 }}
+            dangerouslySetInnerHTML={{ __html: html }}
+            className="mb-6 last:mb-0"
+          />
+        )
+      })}
+    </>
+  )
+}
 
-      {/* Meta Info */}
-      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-12">
-        <span>By <span className="font-medium">{authorName}</span></span>
-        <span>•</span>
-        <span>{formattedDate}</span>
-      </div>
+export default function PostContent({
+  post,
+  authorName,
+  formattedDate,
+  prevPost,
+  nextPost,
+}: PostContentProps) {
+  if (!post) return null
 
-      {/* Content */}
-      <motion.div
-        className="medium-content prose prose-lg dark:prose-invert"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
+  // 🔴 Reading Progress Bar
+  const progressRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!progressRef.current) return
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
+      const scrollPosition = window.scrollY
+      const scrollPercent = (scrollPosition / totalHeight) * 100
+      progressRef.current.style.width = `${Math.min(scrollPercent, 100)}%`
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    handleScroll() // initialize on mount
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  return (
+    <>
+      {/* 🔵 Reading Progress Bar */}
+      <div
+        className="fixed top-0 left-0 h-1 z-50 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150 ease-out"
+        ref={progressRef}
+        style={{ width: "0%" }}
       />
 
-      {/* Navigation */}
-      <div className="flex justify-between mt-16 border-t border-gray-200 dark:border-gray-700 pt-6 text-sm text-gray-600 dark:text-gray-400">
-        {prevPost ? (
-          <motion.div whileHover={{ x: -5 }} transition={{ type: "spring", stiffness: 200 }}>
-            <Link href={`/blog/${prevPost.slug}`} className="hover:underline">
-              ← {prevPost.title}
-            </Link>
-          </motion.div>
-        ) : <div />}
+      <motion.article
+        className="max-w-3xl mx-auto px-4 prose dark:prose-invert prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-iframe:rounded-xl prose-iframe:shadow-lg relative"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* Title */}
+        <motion.h1
+          className="font-serif text-5xl md:text-6xl font-extrabold mb-4 leading-tight"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          {post.title}
+        </motion.h1>
 
-        {nextPost ? (
-          <motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 200 }}>
-            <Link href={`/blog/${nextPost.slug}`} className="hover:underline">
-              {nextPost.title} →
-            </Link>
-          </motion.div>
-        ) : <div />}
-      </div>
-    </motion.article>
+        {/* Subtitle */}
+        {post.subtitle && (
+          <motion.h2
+            className="font-serif text-2xl text-gray-600 dark:text-gray-300 mb-12"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            {post.subtitle}
+          </motion.h2>
+        )}
+
+        {/* Meta Info */}
+        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-12">
+          <span>
+            By <span className="font-medium">{authorName}</span>
+          </span>
+          <span>•</span>
+          <span>{formattedDate}</span>
+        </div>
+
+        {/* ✨ Animated Scroll Content */}
+        <div className="medium-content prose prose-lg dark:prose-invert">
+          <AnimatedContent htmlString={post.content} />
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between mt-16 border-t border-gray-200 dark:border-gray-700 pt-6 text-sm text-gray-600 dark:text-gray-400">
+          {prevPost ? (
+            <motion.div
+              whileHover={{ x: -5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 200 }}
+            >
+              <Link href={`/blog/${prevPost.slug}`} className="hover:underline underline-offset-4">
+                ← {prevPost.title}
+              </Link>
+            </motion.div>
+          ) : (
+            <div />
+          )}
+
+          {nextPost ? (
+            <motion.div
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 200 }}
+            >
+              <Link href={`/blog/${nextPost.slug}`} className="hover:underline underline-offset-4">
+                {nextPost.title} →
+              </Link>
+            </motion.div>
+          ) : (
+            <div />
+          )}
+        </div>
+        <Comments/>
+      </motion.article>
+    </>
   )
 }

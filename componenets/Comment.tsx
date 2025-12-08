@@ -78,7 +78,7 @@ export default function Comments({ postId }: Props) {
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 rounded hover:bg-blue-500"
+            className="bg-gray-600 text-white px-4 rounded hover:bg-gray-500 cursor-pointer"
             disabled={loading}
           >
             Comment
