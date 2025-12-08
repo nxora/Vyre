@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { getPostBySlug, getAllPosts, getRawPostBySlug, serializeForClient} from "@/lib/posts";
 import Container from "@/componenets/Container";
 import ThemeToggle from "@/componenets/ThemeToggle";
 import Link from "next/link";

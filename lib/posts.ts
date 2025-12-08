@@ -71,3 +71,29 @@ export async function deletePost(id: string) {
   return await Post.findOneAndDelete({ _id: id });
 }
  
+// ✅ Raw post fetcher (for auth logic)
+export async function getRawPostBySlug(slug: string) {
+  await connectDB()
+  return await Post.findOne({ slug }).populate("authorId", "username").exec()
+}
+
+// ✅ Safe serialization for client (likes as number)
+export function serializeForClient(post: any): SerializedPost {
+  if (!post) return null as any
+  return {
+    _id: post._id.toString(),
+    title: post.title,
+    slug: post.slug,
+    content: post.content,
+    subtitle: post.subtitle,
+    createdAt: post.createdAt.toISOString(),
+    updatedAt: post.updatedAt?.toISOString(),
+    authorId: post.authorId
+      ? {
+          _id: post.authorId._id.toString(),
+          username: post.authorId.username || "Anonymous",
+        }
+      : null,
+    likes: Array.isArray(post.likes) ? post.likes.length : 0,
+  }
+}

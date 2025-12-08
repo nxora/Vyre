@@ -25,7 +25,10 @@ export async function POST(req: Request) {
 
   const userId = session.user.id;
 
-  const alreadyLiked = post.likes.includes(userId);
+  // ✅ SAFE: Ensure likes is an array (handle undefined or missing field)
+  const likesArray = Array.isArray(post.likes) ? post.likes : [];
+
+  const alreadyLiked = likesArray.includes(userId);
 
   if (alreadyLiked) {
     post.likes.pull(userId);
@@ -35,11 +38,11 @@ export async function POST(req: Request) {
 
   await post.save();
 
-  revalidatePath("/blog")
-  revalidatePath(`/blog/${post.slug}`)  
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${post.slug}`);
 
   return NextResponse.json({
     liked: !alreadyLiked,
-    likesCount: post.likes.length,
+    likesCount: Array.isArray(post.likes) ? post.likes.length : 0,
   });
 }

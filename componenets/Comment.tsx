@@ -1,3 +1,5 @@
+// components/Comment.tsx (or wherever your Comments component lives)
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,7 +8,7 @@ import { useSession } from "next-auth/react";
 interface Comment {
   _id: string;
   content: string;
-  authorId: { username: string };
+  authorId: { username?: string } | null; // 👈 allow null or missing username
   createdAt: string;
 }
 
@@ -21,23 +23,20 @@ export default function Comments({ postId }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function fetchComments() {
-  try {
-    const res = await fetch(`/api/comments?postId=${postId}`);
-    
-    if (!res.ok) {
-      console.error("Failed to fetch comments:", res.status, res.statusText);
-      return;
+    try {
+      const res = await fetch(`/api/comments?postId=${postId}`);
+      
+      if (!res.ok) {
+        console.error("Failed to fetch comments:", res.status, res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
     }
-    
-
-    const data = await res.json();
-    setComments(data);
-  } catch (error) {
-    console.error("Error parsing comments JSON:", error);
-    // Optionally set an error state to show user
   }
-}
-
 
   useEffect(() => {
     fetchComments();
@@ -45,7 +44,7 @@ export default function Comments({ postId }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!content.trim() || !session?.user.id) return;
+    if (!content.trim() || !session?.user.id) return;'session.user is possibly undefned'
 
     setLoading(true);
 
@@ -61,7 +60,7 @@ export default function Comments({ postId }: Props) {
 
     if (res.ok) {
       setContent("");
-      fetchComments();
+      fetchComments(); // refetch to get populated author
     }
 
     setLoading(false);
@@ -69,12 +68,20 @@ export default function Comments({ postId }: Props) {
 
   return (
     <div className="mt-6">
+        <h3>Log in to comment</h3>
       <h4 className="font-semibold mb-3">Comments ({comments.length})</h4>
 
       <div className="space-y-3">
         {comments.map((c) => (
           <div key={c._id} className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <p className="text-sm text-gray-700 dark:text-gray-300"><strong>{c.authorId.username}</strong> • {new Date(c.createdAt).toLocaleString()}</p>
+            {/* ✅ SAFE: fallback if authorId or username is missing */}
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              <strong>
+                {c.authorId?.username || "Deleted User"}
+              </strong>
+              {" • "}
+              {new Date(c.createdAt).toLocaleString()}
+            </p>
             <p className="text-gray-800 dark:text-gray-200">{c.content}</p>
           </div>
         ))}

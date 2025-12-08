@@ -1,3 +1,5 @@
+ // app/api/auth/[...nextauth]/route.ts
+
 import { connectDB } from "@/lib/db"
 import User from "@/models/usermodel"
 import bcrypt from "bcryptjs"
@@ -41,21 +43,42 @@ export const authOptions: AuthOptions = {
 
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, 
   },
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.username = user.username
-      }
-      return token
-    },
+  async jwt({ token, user }) {
+  if (user) {
+    token.id = user.id
+    token.username = user.username
+  }
+
+  // Validate user exists on every request
+  if (token.id) {
+    await connectDB()
+    const dbUser = await User.findById(token.id)
+    if (!dbUser) {
+      console.log(`User ${token.id} deleted — invalidating session`)
+      throw new Error("User not found") //  
+    }
+  }
+
+  return token
+},
+
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string
-        session.user.username = token.username as string
+      if (!token.id) {
+        session.user = undefined 
+
+
+      } else {
+        session.user = {
+          id: token.id as string,
+          username: token.username as string,
+          email: session.user?.email || "",
+        }
       }
+
       return session
     },
   },
