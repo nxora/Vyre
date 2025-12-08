@@ -13,25 +13,32 @@ export interface SerializedPost {
   createdAt: string;
   updatedAt?: string;
   authorId: { _id: string; username: string } | null;
+  likes: number;
 }
 
 function serializePost(post: any): SerializedPost | null {
-  if (!post) return null; 
+  if (!post) return null
+
   return {
-    _id: post._id.toString(),
+    _id: post._id.toString(), // Convert ObjectId to string
     title: post.title,
     slug: post.slug,
     content: post.content,
     subtitle: post.subtitle,
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt?.toISOString(),
+
+    // ✅ Serialize authorId properly
     authorId: post.authorId
       ? {
-          _id: post.authorId._id?.toString(),
-          username: post.authorId.username || 'Anonymous',
+          _id: post.authorId._id.toString(), // Convert nested ObjectId
+          username: post.authorId.username || "Anonymous",
         }
       : null,
-  };
+
+    // ✅ likes should be a number — not an object!
+    likes: Array.isArray(post.likes) ? post.likes.length : 0, // 👈 FIX: count likes array
+  }
 }
 
  export async function getAllPosts(limit?: number): Promise<SerializedPost[]> {

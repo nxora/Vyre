@@ -1,6 +1,7 @@
  "use client"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { FaHeart} from "react-icons/fa"
 
 function stripHtml(html: string, length = 140) {
   return html.replace(/<[^>]*>/g, "").slice(0, length)
@@ -14,6 +15,15 @@ function extractImage(html: string): string | null {
 export default function PostCard({ post }: { post: any }) {
   const preview = stripHtml(post.content)
   const image = extractImage(post.content)
+
+  async function toggleLike(postId: string) {
+  await fetch("/api/posts/like", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ postId }),
+  });
+}
+
 
   return (
     <motion.article
@@ -52,7 +62,14 @@ export default function PostCard({ post }: { post: any }) {
           opacity-0 group-hover:opacity-60 transition-opacity duration-300
           hidden md:block"
         />
-      )}
+       )}
+      <button
+  onClick={() => toggleLike(post._id)}
+  // className="text-red-500 font-bold"
+>
+  <FaHeart/>{post.likes?.length || 0}
+</button>
+
     </motion.article>
   )
 }

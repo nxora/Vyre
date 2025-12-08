@@ -4,7 +4,10 @@ import Container from "@/componenets/Container";
 import ThemeToggle from "@/componenets/ThemeToggle";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PostContent from "./PostContent"; // ✅ Client Component
+import PostContent from "./PostContent"; 
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -12,18 +15,30 @@ interface PostPageProps {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
+
+    const session = await getServerSession(authOptions)
+
+   const rawPost = await getRawPostBySlug(slug) 
   const post = await getPostBySlug(slug);
 
   if (!post) return notFound();
 
+     const currentUserLiked = session?.user?.id
+    ? rawPost.likes?.includes(session.user.id)
+    : false
+      const serializedPost = serializeForClient(rawPost) // We'll define this
   const formattedDate = new Date(post.createdAt).toLocaleDateString();
   const authorName = post.authorId?.username || "Anonymous";
 
   const posts = await getAllPosts();
-  const currentIndex = posts.findIndex((p) => p.slug === slug);//p is possibly null
+  const currentIndex = posts.findIndex((p) => p.slug === slug); 
   const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
   const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
 
+    const postWithLikeState = {
+    ...post,
+    currentUserLiked,
+  }
   return (
     <Container className="max-w-3xl mx-auto py-12 px-6 relative z-10">
       <div className="flex justify-between items-center mb-12">
@@ -33,9 +48,8 @@ export default async function PostPage({ params }: PostPageProps) {
         <ThemeToggle />
       </div>
 
-      {/* ✅ All animations now in client component */}
-      <PostContent
-        post={post}
+       <PostContent
+        post={{ ...serializedPost, currentUserLiked}}
         authorName={authorName}
         formattedDate={formattedDate}
         prevPost={prevPost}
@@ -43,4 +57,4 @@ export default async function PostPage({ params }: PostPageProps) {
       />
     </Container>
   );
-}
+} 

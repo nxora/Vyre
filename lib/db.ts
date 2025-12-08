@@ -1,7 +1,5 @@
-import { error } from "console"
-import  mongoose  from "mongoose"
-import { title } from "process"
-
+ import  mongoose  from "mongoose"
+ 
 const mongoUrI = process.env.MONGO_URI
 if (!mongoUrI) {
     throw new Error("Invalid variable")

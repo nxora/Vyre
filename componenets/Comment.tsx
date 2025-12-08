@@ -21,10 +21,23 @@ export default function Comments({ postId }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function fetchComments() {
+  try {
     const res = await fetch(`/api/comments?postId=${postId}`);
+    
+    if (!res.ok) {
+      console.error("Failed to fetch comments:", res.status, res.statusText);
+      return;
+    }
+    
+
     const data = await res.json();
     setComments(data);
+  } catch (error) {
+    console.error("Error parsing comments JSON:", error);
+    // Optionally set an error state to show user
   }
+}
+
 
   useEffect(() => {
     fetchComments();

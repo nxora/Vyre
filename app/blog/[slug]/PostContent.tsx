@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { motion, useInView } from "framer-motion"
 import Comments from "@/componenets/Comment"
+import { FaHeart } from "react-icons/fa"
 
 interface PostContentProps {
   post: any
@@ -59,6 +60,9 @@ export default function PostContent({
 
   // 🔴 Reading Progress Bar
   const progressRef = useRef<HTMLDivElement>(null)
+    const [likes, setLikes] = useState(post.likes?.length || 0)
+     const [isLiked, setIsLiked] = useState(post.likes?.includes?.(post.currentUserLiked))
+       const [hasInteracted, setHasInteracted] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,10 +78,38 @@ export default function PostContent({
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+    const toggleLike = async () => {
+    if (!hasInteracted) setHasInteracted(true)
+
+    const newLikedState = !isLiked
+    const newLikesCount = newLikedState ? likes + 1 : likes - 1
+
+    // Optimistic update
+    setIsLiked(newLikedState)
+    setLikes(newLikesCount)
+
+    try {
+      const res = await fetch("/api/posts/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: post._id }),
+      })
+
+      if (!res.ok) {
+        // Revert on error
+        setIsLiked(!newLikedState)
+        setLikes(newLikesCount + (newLikedState ? -1 : 1))
+      }
+    } catch (err) {
+      // Revert on network error
+      setIsLiked(!newLikedState)
+      setLikes(newLikesCount + (newLikedState ? -1 : 1))
+    }
+  }
+
   return (
     <>
-      {/* 🔵 Reading Progress Bar */}
-      <div
+       <div
         className="fixed top-0 left-0 h-1 z-50 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150 ease-out"
         ref={progressRef}
         style={{ width: "0%" }}
@@ -112,12 +144,28 @@ export default function PostContent({
         )}
 
         {/* Meta Info */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-12">
-          <span>
-            By <span className="font-medium">{authorName}</span>
-          </span>
-          <span>•</span>
-          <span>{formattedDate}</span>
+     <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 mb-6">
+          <div>
+            <span>
+              By <span className="font-medium">{authorName}</span>
+            </span>
+            <span className="mx-2">•</span>
+            <span>{formattedDate}</span>
+          </div>
+
+          {/* Like Button */}
+          <button
+            onClick={toggleLike}
+            aria-label={isLiked ? "Unlike post" : "Like post"}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${
+              isLiked
+                ? "text-red-500 bg-red-50/20 hover:bg-red-50/30"
+                : "text-gray-500 hover:text-red-500 hover:bg-red-50/10"
+            }`}
+          >
+            <FaHeart className={isLiked ? "fill-current" : ""} />
+            <span>{hasInteracted ? likes : post.likes?.length || 0}</span>
+          </button>
         </div>
 
         {/* ✨ Animated Scroll Content */}
@@ -155,7 +203,7 @@ export default function PostContent({
             <div />
           )}
         </div>
-        <Comments/>
+        <Comments postId={post._id}/>
       </motion.article>
     </>
   )
