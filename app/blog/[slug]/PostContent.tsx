@@ -1,91 +1,51 @@
-// app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
-import Container from "@/componenets/Container";
-import ThemeToggle from "@/componenets/ThemeToggle";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import PostContent from "./PostContent"; // ✅ Client Component
+"use client"
 
-interface PostPageProps {
-  params: Promise<{ slug: string }>;
+import React from "react"
+import Link from "next/link"
+
+interface PostContentProps {
+  post: any
+  authorName: string
+  formattedDate: string
+  prevPost: any
+  nextPost: any
 }
 
-export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
-
-  if (!post) return notFound();
-
-  const formattedDate = new Date(post.createdAt).toLocaleDateString();
-  const authorName = post.authorId?.username || "Anonymous";
-
-  const posts = await getAllPosts();
-  const currentIndex = posts.findIndex((p) => p.slug === slug);//p is possibly null
-  const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
-  const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+export default function PostContent({ post, authorName, formattedDate, prevPost, nextPost }: PostContentProps) {
+  if (!post) return null
 
   return (
-    <Container className="max-w-3xl mx-auto py-12 px-6 relative z-10">
-      <div className="flex justify-between items-center mb-12">
-        <Link href="/blog" className="text-sm underline text-primary hover:opacity-80">
-          ← Back to all posts
-        </Link>
-        <ThemeToggle />
+    <article className="prose max-w-none dark:prose-invert">
+      {/* Title & Subtitle */}
+      <h1 className="font-serif text-4xl font-bold mb-2">{post.title}</h1>
+      {post.subtitle && <h2 className="font-serif text-xl text-gray-600 mb-8">{post.subtitle}</h2>}
+
+      {/* Meta Info */}
+      <div className="flex items-center gap-4 text-sm text-gray-500 mb-12">
+        <span>By {authorName}</span>
+        <span>•</span>
+        <span>{formattedDate}</span>
       </div>
 
-      {/* ✅ All animations now in client component */}
-      <PostContent
-        post={post}
-        authorName={authorName}
-        formattedDate={formattedDate}
-        prevPost={prevPost}
-        nextPost={nextPost}
+      {/* Content */}
+      <div
+        className="medium-content"
+        dangerouslySetInnerHTML={{ __html: post.content }}
       />
-    </Container>
-  );
-}// app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
-import Container from "@/componenets/Container";
-import ThemeToggle from "@/componenets/ThemeToggle";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import PostContent from "./PostContent"; // ✅ Client Component
 
-interface PostPageProps {
-  params: Promise<{ slug: string }>;
-}
-
-export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
-
-  if (!post) return notFound();
-
-  const formattedDate = new Date(post.createdAt).toLocaleDateString();
-  const authorName = post.authorId?.username || "Anonymous";
-
-  const posts = await getAllPosts();
-  const currentIndex = posts.findIndex((p) => p.slug === slug);//p is possibly null
-  const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
-  const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
-
-  return (
-    <Container className="max-w-3xl mx-auto py-12 px-6 relative z-10">
-      <div className="flex justify-between items-center mb-12">
-        <Link href="/blog" className="text-sm underline text-primary hover:opacity-80">
-          ← Back to all posts
-        </Link>
-        <ThemeToggle />
+      {/* Navigation */}
+      <div className="flex justify-between mt-12 border-t pt-6 text-sm text-gray-600">
+        {prevPost ? (
+          <Link href={`/blog/${prevPost.slug}`} className="hover:underline">
+            ← {prevPost.title}
+          </Link>
+        ) : <div />}
+        {nextPost ? (
+          <Link href={`/blog/${nextPost.slug}`} className="hover:underline">
+            {nextPost.title} →
+          </Link>
+        ) : <div />}
       </div>
-
-      {/* ✅ All animations now in client component */}
-      <PostContent
-        post={post}
-        authorName={authorName}
-        formattedDate={formattedDate}
-        prevPost={prevPost}
-        nextPost={nextPost}
-      />
-    </Container>
-  );
+    </article>
+  )
 }
