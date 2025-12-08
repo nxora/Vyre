@@ -35,6 +35,7 @@ function page() {
         <input placeholder="Username" value={username} onChange={(e) => setUser(e.target.value)} className="border p-2 rounded" />
         <input placeholder="Email" value={email} type="email" onChange={(e) => setEmail(e.target.value)} className="border p-2 rounded" />
         <input placeholder="Password" value={password} type="password" onChange={(e) => setPassword(e.target.value)} className="border p-2 rounded" />
+        <p className='text-gray-500 text text-center'>Already have an account <a href="/login">Login</a></p>
         <button className="bg-gray-600 text-white py-2 rounded cursor-pointer hover:bg-gray-400">Register</button>
       </form>
     </div>

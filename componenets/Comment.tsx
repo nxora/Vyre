@@ -67,8 +67,7 @@ export default function Comments({ postId }: Props) {
   }
 
   return (
-    <div className="mt-6">
-        <h3>Log in to comment</h3>
+    <div className="mt-6"> 
       <h4 className="font-semibold mb-3">Comments ({comments.length})</h4>
 
       <div className="space-y-3">
@@ -105,7 +104,7 @@ export default function Comments({ postId }: Props) {
           </button>
         </form>
       ) : (
-        <p className="mt-2 text-sm opacity-70">Log in to comment</p>
+        <a className="mt-2 text-sm opacity-70" href="/register">Log in to comment</a>
       )}
     </div>
   );
