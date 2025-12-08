@@ -80,36 +80,68 @@ hr{
 }
 
 /* READER VIEW */
-/* Add to globals.css or tailwind config */
-.medium-editor img,
-.medium-content img {
+/* Fonts */
+body {
+  font-family: 'Inter', sans-serif;
+}
+.prose h1, .prose h2, .prose h3 {
+  font-family: 'Merriweather', serif;
+}
+
+/* Images */
+.prose img {
   display: block;
   margin: 2rem auto;
   max-width: 100%;
-  border-radius: 0.5rem;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.prose img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-.medium-editor iframe,
-.medium-content iframe {
+/* Iframes (YouTube) */
+.prose iframe {
   display: block;
   margin: 2rem auto;
   max-width: 100%;
-  border-radius: 0.5rem;
+  aspect-ratio: 16/9;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
+/* Code Blocks */
 .medium-codeblock pre {
   background: #f5f5f5;
   padding: 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  font-family: "Fira Code", monospace;
+  border-radius: 0.75rem;
+  font-family: 'Fira Code', monospace;
   font-size: 0.875rem;
+  overflow-x: auto;
 }
 
+/* Blockquotes */
 .medium-blockquote {
   border-left: 4px solid #ddd;
   padding-left: 1rem;
-  color: #555;
   font-style: italic;
+  color: #555;
+  margin: 2rem 0;
+}
+
+/* Smooth fade in animations for content */
+.medium-content > * {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Make images bigger by default */
+.medium-image {
+  @apply w-[60%] max-w-2xl h-auto;
+}
+
+/* Optional: make YouTube videos responsive */
+.medium-youtube {
+  @apply w-full max-w-3xl h-1/2;
 }

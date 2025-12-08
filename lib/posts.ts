@@ -8,6 +8,7 @@ export interface SerializedPost {
   _id: string;
   title: string;
   slug: string;
+  subtitle: string;
   content: string;
   createdAt: string;
   updatedAt?: string;
@@ -15,19 +16,12 @@ export interface SerializedPost {
 }
 
 function serializePost(post: any): SerializedPost | null {
-  if (!post) return null;
-   let processedContent = post.content;
-  if (typeof post.content === 'string') {
-    processedContent = post.content.replace(
-      /<img([^>]*?)>/g,
-      '<img$1 class="mx-auto my-6 max-w-full rounded-lg shadow-md" />'
-    );
-  }
+  if (!post) return null; 
   return {
     _id: post._id.toString(),
     title: post.title,
     slug: post.slug,
-    content: processedContent,
+    content: post.content,
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt?.toISOString(),
     authorId: post.authorId
@@ -39,8 +33,7 @@ function serializePost(post: any): SerializedPost | null {
   };
 }
 
-// Now explicitly type the return
-export async function getAllPosts(limit?: number): Promise<SerializedPost[]> {
+ export async function getAllPosts(limit?: number): Promise<SerializedPost[]> {
   await connectDB();
   let query = Post.find().populate("authorId", "username").sort({ createdAt: -1 });
   if (limit) query = query.limit(limit);
@@ -61,14 +54,12 @@ export async function getAuthor(authorId: string) {
 
 export async function createPost(data: SerializedPost) {
   await connectDB();
-
-  const sanitizedContent = sanitizeHTML
-  const post = await Post.create(data);
-  return post.toObject(); // optional, but consistent
+   const post = await Post.create(data);
+  return post.toObject();  
 }
 
 export async function deletePost(id: string) {
   await connectDB();
   return await Post.findOneAndDelete({ _id: id });
 }
-export type { SerializedPost };//export declaration conflicts with exported declaration of Serialized post
+ 
