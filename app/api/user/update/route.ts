@@ -12,21 +12,32 @@ export async function PUT(request: Request) {
 
   await connectDB();
   const formData = await request.formData();
-  const username = formData.get("username")?.toString() || "";
-  const bio = formData.get("bio")?.toString() || "";
+
+  // Only update fields that are provided
+  const updateData: any = {};
+
+  const username = formData.get("username")?.toString().trim();
+  const bio = formData.get("bio")?.toString().trim();
   const avatarFile = formData.get("avatar") as File | null;
 
-   if (username) {
+  if (username) {
     const existing = await User.findOne({ username, _id: { $ne: session.user.id } });
     if (existing) return new Response("Username taken", { status: 400 });
+    updateData.username = username;
   }
 
-  let updateData: any = { username, bio };
+  if (bio !== undefined) { 
+    updateData.bio = bio;  
+  }
 
-   if (avatarFile) {
+  if (avatarFile) {
     const buffer = Buffer.from(await avatarFile.arrayBuffer());
     const filename = `${Date.now()}-${avatarFile.name.replace(/\s+/g, "-")}`;
-    const filepath = path.join(process.cwd(), "public", "uploads", filename);
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    
+     await fs.mkdir(uploadsDir, { recursive: true });
+    
+    const filepath = path.join(uploadsDir, filename);
     await fs.writeFile(filepath, buffer);
     updateData.avatar = `/uploads/${filename}`;
   }

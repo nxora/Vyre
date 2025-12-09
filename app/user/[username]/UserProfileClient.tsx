@@ -1,12 +1,12 @@
 // app/user/[username]/UserProfileClient.tsx
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import FollowButton from "@/componenets/FollowButton";
-import PostCard from "@/componenets/PostCard";
-import ThemeToggle from "@/componenets/ThemeToggle";
+import { motion } from "framer-motion"; 
+import FollowButton from "@/componenets/buttons/FollowButton"; 
 import type { SerializedPost } from "@/lib/posts";
+import { FaPencilAlt } from "react-icons/fa";
+import { useState } from "react";
+import EditProfile from "@/componenets/EditProfile";
 
 interface UserProfileClientProps {
   user: {
@@ -26,30 +26,16 @@ export default function UserProfileClient({
   posts,
   isMe,
 }: UserProfileClientProps) {
+      const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      variants={{
-        initial: {},
-        animate: {
-          transition: {
-            staggerChildren: 0.08,
-            delayChildren: 0.1,
-          },
-        },
-      }}
-      className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8 mb-12"
-    >
+    <motion.div initial="initial"  animate="animate" variants={{ initial: {}, animate: { transition: { staggerChildren: 0.08, delayChildren: 0.1,}, }, }} className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8 mb-12" >
       {/* Avatar */}
-      <motion.div
-        variants={{
+      <motion.div variants={{
           initial: { scale: 0.8, opacity: 0, y: 20 },
           animate: { scale: 1, opacity: 1, y: 0 },
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className="flex-shrink-0 w-24 h-24 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg"
-      >
+        transition={{ type: "spring", stiffness: 300, damping: 20 }} className="flex-shrink-0 w-24 h-24 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg" >
         {user.avatar ? (
           <motion.img
             initial={{ opacity: 0 }}
@@ -105,20 +91,18 @@ export default function UserProfileClient({
             </motion.span>
           )}
         </div>
- {isMe && (
-  <div className="mt-4">
-    <Link
-      href="/user/edit"
-      className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-2 w-4" fill="none" viewBox="0 0 94 24" stroke="currentColor"> {/* ✅ fixed w-4 */}
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V6a2 2 0 012-2h2z" />
-      </svg>
-      Edit Profile
-    </Link>
-  </div>
-)}
-
+    {isMe && (
+        <div className="mt-4">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            <FaPencilAlt className="h-4 w-4" />
+            Edit Profile
+          </button>
+        </div>
+      )}
+      <EditProfile isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} user={user} />
         {user.bio && (
           <motion.p
   variants={{
@@ -126,7 +110,7 @@ export default function UserProfileClient({
     animate: { opacity: 1, y: 0 },
   }}
   transition={{ delay: 0.15 }}
-  className="text-gray-700 dark:text-gray-300 mb-4 max-w-2xl leading-relaxed"
+  className="text-gray-800 dark:text-gray-300 mb-4 max-w-2xl leading-relaxed"
 >
   {user.bio}
 </motion.p>
@@ -138,7 +122,7 @@ export default function UserProfileClient({
             animate: { opacity: 1, y: 0 },
           }}
           transition={{ delay: 0.2 }}
-  className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400 mb-6"
+  className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-6" // 👈 slightly darker
         >
            <span>
     <strong className="text-gray-900 dark:text-white">

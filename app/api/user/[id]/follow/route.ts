@@ -1,6 +1,7 @@
 // Supports:
 // GET  → check if current user follows target
 // POST → toggle follow
+// app/api/users/[id]/follow/route.ts
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

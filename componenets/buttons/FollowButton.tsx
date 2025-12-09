@@ -52,7 +52,7 @@ export default function FollowButton({ targetUserId }: { targetUserId: string })
       ) : (
         <>
           <FaUserPlus size={12} />
-          Follow
+            Follow
         </>
       )}
     </button>

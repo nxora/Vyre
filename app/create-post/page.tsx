@@ -13,6 +13,7 @@ import slugify from "slugify"
 import { useSession } from "next-auth/react"
 import ThemeToggle from "@/componenets/ThemeToggle"
 import EditorToolbar from "@/componenets/EditorToolbar"
+import BackButton from "../user/[username]/BackButton"
 
 export default function CreatePostPage() {
   const { data: session } = useSession()
@@ -147,6 +148,10 @@ const content = tempDiv.innerHTML
           Publish
         </button>
       </form>
+      <div className="mt-4">
+      <BackButton/>
+
+      </div>
     </div>
   )
 }
