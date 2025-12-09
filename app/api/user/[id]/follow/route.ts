@@ -45,8 +45,7 @@ export async function POST(
   if (!targetUser) return jsonError("User not found", 404);
 
   const followers = Array.isArray(targetUser.followers) ? targetUser.followers : [];
-  const isCurrentlyFollowing = targetUser.followers.includes(currentUserId);
-
+const isCurrentlyFollowing = targetUser.followers.some( (fid: Types.ObjectId) => fid.equals(currentUserId));
   if (isCurrentlyFollowing) {
     await User.findByIdAndUpdate(targetUserId, { $pull: { followers: currentUserId } });
     await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetUserId } });
