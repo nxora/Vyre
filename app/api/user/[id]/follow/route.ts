@@ -44,6 +44,7 @@ export async function POST(
   const targetUser = await User.findById(targetUserId);
   if (!targetUser) return jsonError("User not found", 404);
 
+  const followers = Array.isArray(targetUser.followers) ? targetUser.followers : [];
   const isCurrentlyFollowing = targetUser.followers.includes(currentUserId);
 
   if (isCurrentlyFollowing) {
