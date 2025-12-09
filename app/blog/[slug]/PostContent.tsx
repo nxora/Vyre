@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion"
 import Comments from "@/componenets/Comment"
 import { FaHeart } from "react-icons/fa"
 import { SerializedPost } from "@/lib/posts"
+import BackButton from "@/app/user/[username]/BackButton"
  
 interface PostContentProps {
   post: SerializedPost & { currentUserLiked?: boolean } // 👈
@@ -206,6 +207,10 @@ By{" "}
         </div>
 
         <Comments postId={post._id} />
+        <div className="mt-4">
+
+        <BackButton/>
+        </div>
       </motion.article>
     </>
   )

@@ -8,6 +8,7 @@ import ThemeToggle from "@/componenets/ThemeToggle"
 import PostCard from "@/componenets/PostCard"
 import Link from "next/link"
 import NewPost from "@/componenets/buttons/NewPost"
+import Profile from "@/componenets/buttons/Profile"
  
 export default async function Page() {
   const session = await getServerSession(authOptions)
@@ -27,6 +28,7 @@ export default async function Page() {
           <div className="flex gap-5">
           <ThemeToggle />
           <NewPost />
+        <Profile/>
           </div>
           
         </div>

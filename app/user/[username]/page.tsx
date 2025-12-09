@@ -9,6 +9,7 @@ import UserProfileClient from "./UserProfileClient";
 import PostCard from "@/componenets/PostCard"; // ✅ fix typo
 import ThemeToggle from "@/componenets/ThemeToggle"; // ✅ fix typo
 import BackButton from "./BackButton"; // 👈 NEW
+import Profile from "@/componenets/buttons/Profile";
 
 export default async function UserProfile({
   params,
@@ -33,8 +34,9 @@ export default async function UserProfile({
       </div>
 
       {/* 👇 THEME TOGGLE */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10 g flex gap-4">
         <ThemeToggle />
+        <Profile/>
       </div>
 
       {/* 👇 PROFILE CONTENT */}
