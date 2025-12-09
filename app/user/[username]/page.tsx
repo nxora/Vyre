@@ -38,7 +38,7 @@ export default async function UserProfile({
         <Profile/>
       </div>
 
-      <UserProfileClient user={user} posts={posts} isMe={isMe} isLoggedIn={isLoggedIn} />//type doesnt exist on type 'intrinsicAttributes & UserProfileClientProps'
+      <UserProfileClient user={user} posts={posts} isMe={isMe} isLoggedIn={isLoggedIn} />
 
       <div className="border-t border-neutral-200/50 dark:border-neutral-800/50 pt-8">
         <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">

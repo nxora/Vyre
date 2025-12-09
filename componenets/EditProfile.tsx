@@ -10,27 +10,36 @@ export default function EditProfile ({ isOpen, onClose, user }: { isOpen: boolea
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const formData = new FormData();
-    if (username.trim()) formData.append("username", username.trim());
-    formData.append("bio", bio); // allow empty
-    if (fileInputRef.current?.files?.[0]) {
-      formData.append("avatar", fileInputRef.current.files[0]);
+  const formData = new FormData();
+  const originalUsername = user.username;
+  if (username.trim()) formData.append("username", username.trim());
+  formData.append("bio", bio);
+  if (fileInputRef.current?.files?.[0]) {
+    formData.append("avatar", fileInputRef.current.files[0]);
+  }
+
+  const res = await fetch("/api/user/update", {
+    method: "PUT",
+    body: formData,
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    alert("Profile updated!");
+
+    onClose();
+
+    // ✅ If username changed, redirect to new profile
+    if (data.newUsername && data.newUsername !== originalUsername) {
+      window.location.href = `/user/${data.newUsername}`;
+    } else {
+      router.refresh(); // just refresh if no username change
     }
-
-    const res = await fetch("/api/user/update", {
-      method: "PUT",
-      body: formData,
-    });
-
-    if (res.ok) {
-      alert("Profile updated!");
-      onClose(); // close modal
-      router.refresh(); // reload page
-    }
-  };
+  }
+};
 
   if (!isOpen) return null;
 

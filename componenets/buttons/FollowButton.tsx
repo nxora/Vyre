@@ -12,7 +12,7 @@ export default function FollowButton({ targetUserId }: { targetUserId: string })
 
   useEffect(() => {
     const fetchFollowing = async () => {
-      const res = await fetch(`/api/users/${targetUserId}/follow`);
+      const res = await fetch(`/api/user/${targetUserId}/follow`);
       if (!res.ok) return; // guest → isFollowing = null
       const data = await res.json();
       setIsFollowing(data.isFollowing);
@@ -21,9 +21,15 @@ export default function FollowButton({ targetUserId }: { targetUserId: string })
   }, [targetUserId]);
 
   const toggleFollow = async () => {
+    console.log("Following user ID:", targetUserId);
+      if (!targetUserId || targetUserId.length < 10) {
+    console.error("Invalid user ID:", targetUserId);
+    alert("Invalid user.");
+    return;
+  }
     setLoading(true);
     try {
-      const res = await fetch(`/api/users/${targetUserId}/follow`, {
+      const res = await fetch(`/api/user/${targetUserId}/follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

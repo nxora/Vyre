@@ -102,8 +102,7 @@ const toggleLike = async () => {
       return
     }
 
-    // ✅ On SUCCESS: use the server's true like count
-    const data = await res.json()
+     const data = await res.json()
     setLikes(data.likesCount)
     setIsLiked(data.liked)
 

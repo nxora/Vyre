@@ -16,16 +16,19 @@ interface UserProfileClientProps {
     avatar?: string;
     followers?: any[];
     following?: any[];
-    isLoggedIn: true
-  };
-  posts: SerializedPost[];
-  isMe: boolean;
+    isLoggedIn: boolean
+};
+posts: SerializedPost[];
+isMe: boolean;
+isLoggedIn: boolean
+
 }
 
 export default function UserProfileClient({
   user,
   posts,
   isMe,
+  isLoggedIn
 }: UserProfileClientProps) {
       const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -152,11 +155,9 @@ export default function UserProfileClient({
             transition={{ delay: 0.25, type: "spring", stiffness: 400 }}
             className="mt-2"
           >
-{
-  session && !isMe && ( //cannot find name 'session' did u xrsession
-    <FollowButton targetUserId={user._id} />
-  )
-}          </motion.div>
+ {!isMe && isLoggedIn && (
+  <FollowButton targetUserId={user._id} />
+)}         </motion.div>
         )}
       </motion.div>
     </motion.div>

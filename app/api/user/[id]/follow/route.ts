@@ -1,10 +1,9 @@
-// app/api/users/[id]/follow/route.ts
+// app/api/user/[id]/follow/route.ts
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/db";
 import User from "@/models/usermodel";
 
-// Helper: send JSON error
 function jsonError(message: string, status = 401) {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -14,32 +13,33 @@ function jsonError(message: string, status = 401) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ✅ Promise
 ) {
+  const { id } = await params; // ✅ await
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return Response.json({ isFollowing: false }); // ✅ safe for guests
+    return Response.json({ isFollowing: false });
   }
 
   await connectDB();
-  const user = await User.findById(params.id).select("followers");
+  const user = await User.findById(id).select("followers");
   const isFollowing = user?.followers?.includes(session.user.id) || false;
   return Response.json({ isFollowing });
 }
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ✅ Promise
 ) {
+  const { id } = await params; // ✅ await
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    // ✅ Return JSON error — do NOT redirect
     return jsonError("Authentication required", 401);
   }
 
   await connectDB();
   const currentUserId = session.user.id;
-  const targetUserId = params.id;
+  const targetUserId = id;
 
   const targetUser = await User.findById(targetUserId);
   if (!targetUser) return jsonError("User not found", 404);
