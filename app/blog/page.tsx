@@ -7,6 +7,7 @@ import Rotate from "@/componenets/Rotate"
 import ThemeToggle from "@/componenets/ThemeToggle"
 import PostCard from "@/componenets/PostCard"
 import Link from "next/link"
+import { FaPlug, FaPlus } from "react-icons/fa"
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
@@ -24,9 +25,13 @@ export default async function Page() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-black tracking-tight">Vyre</h1>
           <ThemeToggle />
+          
         </div>
 
         <p className="text-lg opacity-80 mb-10">What Are You Thinking About Today?</p>
+        <div className="flex items-center hover:underline" >
+          <Link href="/create-post" className="font-semibold mr-96  ">Create Your Own World Today  </Link><FaPlus/>
+        </div>
 
         {/* ✅ Posts preview */}
         <div className="space-y-4">

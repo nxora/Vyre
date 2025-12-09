@@ -13,7 +13,6 @@ import slugify from "slugify"
 import { useSession } from "next-auth/react"
 import ThemeToggle from "@/componenets/ThemeToggle"
 import EditorToolbar from "@/componenets/EditorToolbar"
-import { FaBookOpen, FaPaintBrush } from "react-icons/fa"
 
 export default function CreatePostPage() {
   const { data: session } = useSession()
@@ -81,8 +80,7 @@ export default function CreatePostPage() {
     }
 
     try {
-// Get full HTML
-const fullHtml = editor.getHTML()
+ const fullHtml = editor.getHTML()
 
  const tempDiv = document.createElement('div')
 tempDiv.innerHTML = fullHtml
@@ -90,18 +88,15 @@ tempDiv.innerHTML = fullHtml
  const h1 = tempDiv.querySelector('h1')
 const title = h1?.innerText || ''
 
-// Extract subtitle (first h2 after h1)
-const h2 = Array.from(tempDiv.querySelectorAll('h2')).find(el => {
+ const h2 = Array.from(tempDiv.querySelectorAll('h2')).find(el => {
   const prev = el.previousElementSibling
   return prev && prev.tagName === 'H1'
 })
 const subtitle = h2?.innerText || ''
 
-// Remove h1 and h2 from content
 if (h1) h1.remove()
 if (h2) h2.remove()
 
-// Get cleaned content (without title/subtitle)
 const content = tempDiv.innerHTML     
  const res = await fetch("/api/posts", {
         method: "POST",

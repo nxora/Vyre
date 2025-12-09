@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { FaComment } from "react-icons/fa";
 
 interface Comment {
   _id: string;
@@ -73,8 +74,7 @@ export default function Comments({ postId }: Props) {
       <div className="space-y-3">
         {comments.map((c) => (
           <div key={c._id} className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            {/* ✅ SAFE: fallback if authorId or username is missing */}
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+             <p className="text-sm text-gray-700 dark:text-gray-300">
               <strong>
                 {c.authorId?.username || "Deleted User"}
               </strong>
@@ -100,7 +100,7 @@ export default function Comments({ postId }: Props) {
             className="bg-gray-600 text-white px-4 rounded hover:bg-gray-500 cursor-pointer"
             disabled={loading}
           >
-            Comment
+            <FaComment/>
           </button>
         </form>
       ) : (
