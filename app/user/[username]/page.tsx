@@ -1,14 +1,13 @@
-// app/user/[username]/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getUserByUsername } from "@/lib/user";
 import { getPostsByAuthor } from "@/lib/posts";
-import Container from "@/componenets/Container"; // ✅ fix typo
+import Container from "@/componenets/Container";
 import { notFound } from "next/navigation";
 import UserProfileClient from "./UserProfileClient";
-import PostCard from "@/componenets/PostCard"; // ✅ fix typo
-import ThemeToggle from "@/componenets/ThemeToggle"; // ✅ fix typo
-import BackButton from "./BackButton"; // 👈 NEW
+import PostCard from "@/componenets/PostCard";
+import ThemeToggle from "@/componenets/ThemeToggle";
+import BackButton from "./BackButton";
 import Profile from "@/componenets/buttons/Profile";
 
 export default async function UserProfile({
@@ -35,7 +34,7 @@ export default async function UserProfile({
 
       <div className="absolute top-4 right-4 z-10 g flex gap-4">
         <ThemeToggle />
-        <Profile/>
+        <Profile />
       </div>
 
       <UserProfileClient user={user} posts={posts} isMe={isMe} isLoggedIn={isLoggedIn} />
@@ -48,14 +47,7 @@ export default async function UserProfile({
         {posts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">No posts yet.</p>
-            {isMe && (
-              <a
-                href="/blog/new"
-                className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md hover:opacity-90"
-              >
-                Create a Post
-              </a>
-            )}
+            {isMe && ( <a href="/blog/new" className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md hover:opacity-90"> Create a Post</a> )}
           </div>
         ) : (
           <div className="space-y-8">

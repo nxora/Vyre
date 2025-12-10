@@ -71,12 +71,10 @@ export default function EditorToolbar({ editor }: { editor: any }) {
 
   return (
     <div className="sticky top-0 z-50 editor-toolbar flex flex-wrap gap-1">
-      {/* Paragraph */}
       <button type="button" className={button} onClick={setParagraph} title="Paragraph">
         <FaParagraph />
       </button>
 
-      {/* Headings */}
       <button
         type="button"
         className={button}
@@ -96,7 +94,6 @@ export default function EditorToolbar({ editor }: { editor: any }) {
 
       <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-700 my-auto"></div>
 
-      {/* Text Styles */}
       <button type="button" className={button} onClick={toggleBold} title="Bold">
         <FaBold />
       </button>
@@ -112,7 +109,6 @@ export default function EditorToolbar({ editor }: { editor: any }) {
 
       <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-700 my-auto"></div>
 
-      {/* Lists & Blocks */}
       <button type="button" className={button} onClick={toggleBulletList} title="Bullet List">
         <FaListUl />
       </button>
@@ -131,7 +127,6 @@ export default function EditorToolbar({ editor }: { editor: any }) {
 
       <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-700 my-auto"></div>
 
-      {/* Media */}
       <button type="button" className={button} onClick={uploadImage} title="Image">
         <FaImage />
       </button>

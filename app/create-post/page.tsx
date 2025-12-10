@@ -19,7 +19,6 @@ export default function CreatePostPage() {
   const { data: session } = useSession()
   const [message, setMessage] = useState("")
 
-  // Tiptap Editor
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -52,7 +51,6 @@ export default function CreatePostPage() {
     immediatelyRender: false
   })
 
-  // Extract title/subtitle
   const getTitle = () => {
     const html = editor?.getHTML()
     if (!html) return ""
@@ -81,25 +79,25 @@ export default function CreatePostPage() {
     }
 
     try {
- const fullHtml = editor.getHTML()
+      const fullHtml = editor.getHTML()
 
- const tempDiv = document.createElement('div')
-tempDiv.innerHTML = fullHtml
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = fullHtml
 
- const h1 = tempDiv.querySelector('h1')
-const title = h1?.innerText || ''
+      const h1 = tempDiv.querySelector('h1')
+      const title = h1?.innerText || ''
 
- const h2 = Array.from(tempDiv.querySelectorAll('h2')).find(el => {
-  const prev = el.previousElementSibling
-  return prev && prev.tagName === 'H1'
-})
-const subtitle = h2?.innerText || ''
+      const h2 = Array.from(tempDiv.querySelectorAll('h2')).find(el => {
+        const prev = el.previousElementSibling
+        return prev && prev.tagName === 'H1'
+      })
+      const subtitle = h2?.innerText || ''
 
-if (h1) h1.remove()
-if (h2) h2.remove()
+      if (h1) h1.remove()
+      if (h2) h2.remove()
 
-const content = tempDiv.innerHTML     
- const res = await fetch("/api/posts", {
+      const content = tempDiv.innerHTML
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -149,7 +147,7 @@ const content = tempDiv.innerHTML
         </button>
       </form>
       <div className="mt-4">
-      <BackButton/>
+        <BackButton />
 
       </div>
     </div>

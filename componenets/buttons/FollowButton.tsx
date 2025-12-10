@@ -1,4 +1,3 @@
-// components/FollowButton.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,7 +12,7 @@ export default function FollowButton({ targetUserId, onToggle }: { targetUserId:
   useEffect(() => {
     const fetchFollowing = async () => {
       const res = await fetch(`/api/user/${targetUserId}/follow`);
-      if (!res.ok) return; // guest → isFollowing = null
+      if (!res.ok) return;
       const data = await res.json();
       setIsFollowing(data.isFollowing);
     };
@@ -22,11 +21,11 @@ export default function FollowButton({ targetUserId, onToggle }: { targetUserId:
 
   const toggleFollow = async () => {
     console.log("Following user ID:", targetUserId);
-      if (!targetUserId || targetUserId.length < 10) {
-    console.error("Invalid user ID:", targetUserId);
-    alert("Invalid user.");
-    return;
-  }
+    if (!targetUserId || targetUserId.length < 10) {
+      console.error("Invalid user ID:", targetUserId);
+      alert("Invalid user.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`/api/user/${targetUserId}/follow`, {
@@ -42,7 +41,6 @@ export default function FollowButton({ targetUserId, onToggle }: { targetUserId:
       const data = await res.json();
 
       if (res.status === 401 && data.error === "Authentication required") {
-        // ✅ Redirect to login
         router.push("/login");
         return;
       }
@@ -52,24 +50,23 @@ export default function FollowButton({ targetUserId, onToggle }: { targetUserId:
       }
 
       setIsFollowing(data.isFollowing);
-      onToggle?.(data.isFollowing); 
+      onToggle?.(data.isFollowing);
     } catch (err) {
       console.error("Follow failed:", err);
       alert("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   return (
     <button
       onClick={toggleFollow}
       disabled={loading}
-      className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 ${
-        isFollowing
+      className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 ${isFollowing
           ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-default"
           : "bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-      }`}
+        }`}
     >
       {isFollowing ? (
         <>

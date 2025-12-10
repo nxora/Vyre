@@ -1,11 +1,11 @@
- import Container from "@/componenets/Container"
+import Container from "@/componenets/Container"
 import RotatingCube from "@/componenets/RotatingCube"
 import ThemeToggle from "@/componenets/ThemeToggle"
 import Link from "next/link"
- 
+
 export default function HomePage() {
   return (
-    <> 
+    <>
 
       <Container  >
         <div className="flex justify-between items-center mb-8">
@@ -23,7 +23,7 @@ export default function HomePage() {
         </div>
 
         <Link href="/blog" className="underline text-primary hover:opacity-80">Read the blog →</Link>
-       </Container>
+      </Container>
     </>
   )
 }
