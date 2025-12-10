@@ -20,8 +20,6 @@ export default async function Page() {
 
   return (
     <>
-      <Rotate />
-
       <Container className="relative z-10 p-6  rounded-xl  ">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-black tracking-tight">Vyre</h1>
