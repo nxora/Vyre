@@ -1,4 +1,4 @@
-//app/blog/page.tsx
+
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { getAllPosts } from "@/lib/posts"
@@ -9,11 +9,11 @@ import PostCard from "@/componenets/PostCard"
 import Link from "next/link"
 import NewPost from "@/componenets/buttons/NewPost"
 import Profile from "@/componenets/buttons/Profile"
- 
+
 export default async function Page() {
   const session = await getServerSession(authOptions)
 
-  // ✅ limit posts if logged out
+
   const posts = session
     ? await getAllPosts()
     : await getAllPosts(5)
@@ -26,18 +26,17 @@ export default async function Page() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-black tracking-tight">Vyre</h1>
           <div className="flex gap-5">
-          <ThemeToggle />
-          <NewPost />
-        <Profile/>
+            <ThemeToggle />
+            <NewPost />
+            <Profile />
           </div>
-          
+
         </div>
 
         <p className="text-lg opacity-80 mb-10">What Are You Thinking About Today?</p>
         <div className="flex items-center hover:underline" >
-         </div>
+        </div>
 
-        {/* ✅ Posts preview */}
         <div className="space-y-4">
           {posts.length === 0 && (
             <p className="opacity-60">No posts yet.</p>

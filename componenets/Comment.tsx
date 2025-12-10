@@ -1,5 +1,3 @@
-// components/Comment.tsx (or wherever your Comments component lives)
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -9,7 +7,7 @@ import { FaComment } from "react-icons/fa";
 interface Comment {
   _id: string;
   content: string;
-  authorId: { username?: string } | null; // 👈 allow null or missing username
+  authorId: { username?: string } | null; 
   createdAt: string;
 }
 
@@ -61,7 +59,7 @@ export default function Comments({ postId }: Props) {
 
     if (res.ok) {
       setContent("");
-      fetchComments(); // refetch to get populated author
+      fetchComments();  
     }
 
     setLoading(false);

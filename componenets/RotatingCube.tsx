@@ -10,20 +10,20 @@ function OrbMesh() {
   const { pointer } = useThree()
   const [primaryColor, setPrimaryColor] = useState("#000000")
 
-   useEffect(() => {
+  useEffect(() => {
     const root = getComputedStyle(document.documentElement)
     const color = root.getPropertyValue('--primary').trim() || '#000'
     setPrimaryColor(color)
   }, [])
 
-   useFrame((_, delta) => {
+  useFrame((_, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y += delta * 1.5  
+      mesh.current.rotation.y += delta * 1.5
       mesh.current.rotation.x += delta * 0.8
     }
   })
 
-   useEffect(() => {
+  useEffect(() => {
     if (!mesh.current) return
     const x = pointer.x * 0.1
     const y = -pointer.y * 0.1
@@ -33,11 +33,11 @@ function OrbMesh() {
 
   return (
     <Icosahedron ref={mesh} args={[0.8, 0]} scale={1.5}>
-      <meshStandardMaterial 
+      <meshStandardMaterial
         emissive={primaryColor}
-        emissiveIntensity={0.2}    
-        roughness={0.7}           
-        metalness={1.7}            
+        emissiveIntensity={0.2}
+        roughness={0.7}
+        metalness={1.7}
       />
     </Icosahedron>
   )

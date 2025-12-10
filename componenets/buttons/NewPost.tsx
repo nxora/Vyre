@@ -1,4 +1,3 @@
-// components/NewPost.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,7 +13,7 @@ export default function NewPost() {
     if (status === "loading") return;
 
     if (session) {
-      router.push("/create-post"); 
+      router.push("/create-post");
     } else {
       router.push("/register");
     }

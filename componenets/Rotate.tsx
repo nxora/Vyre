@@ -27,13 +27,13 @@ function OrbMesh() {
 }
 
 export default function Rotate() {
-  return ( 
+  return (
     <div className="fixed inset-0 -z-10">
       <Canvas
         camera={{ position: [0, 0, 4] }}
-        style={{ 
+        style={{
           background: 'transparent',
-          pointerEvents: 'none'  
+          pointerEvents: 'none'
         }}
       >
         <ambientLight intensity={1.5} />

@@ -1,10 +1,9 @@
-// app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts, getRawPostBySlug, serializeForClient} from "@/lib/posts";
+import { getPostBySlug, getAllPosts, getRawPostBySlug, serializeForClient } from "@/lib/posts";
 import Container from "@/componenets/Container";
 import ThemeToggle from "@/componenets/ThemeToggle";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PostContent from "./PostContent"; 
+import PostContent from "./PostContent";
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -16,26 +15,26 @@ interface PostPageProps {
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
 
-    const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions)
 
-   const rawPost = await getRawPostBySlug(slug) 
+  const rawPost = await getRawPostBySlug(slug)
   const post = await getPostBySlug(slug);
 
   if (!post) return notFound();
 
-     const currentUserLiked = session?.user?.id
+  const currentUserLiked = session?.user?.id
     ? rawPost.likes?.includes(session.user.id)
     : false
-      const serializedPost = serializeForClient(rawPost) // We'll define this
+  const serializedPost = serializeForClient(rawPost)
   const formattedDate = new Date(post.createdAt).toLocaleDateString();
   const authorName = post.authorId?.username || "Anonymous";
 
   const posts = await getAllPosts();
-  const currentIndex = posts.findIndex((p) => p.slug === slug); 
+  const currentIndex = posts.findIndex((p) => p.slug === slug);
   const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
   const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
 
-    const postWithLikeState = {
+  const postWithLikeState = {
     ...post,
     currentUserLiked,
   }
@@ -48,8 +47,8 @@ export default async function PostPage({ params }: PostPageProps) {
         <ThemeToggle />
       </div>
 
-       <PostContent
-        post={{ ...serializedPost, currentUserLiked}}
+      <PostContent
+        post={{ ...serializedPost, currentUserLiked }}
         authorName={authorName}
         formattedDate={formattedDate}
         prevPost={prevPost}

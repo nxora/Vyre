@@ -1,5 +1,4 @@
-// components/NewPost.tsx
-"use client";
+ "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,11 +12,9 @@ export default function Profile() {
   const handleClick = () => {
     if (status === "loading") return;
 
-    if (session?.user?.username) {
-      // ✅ Go to user profile if logged in
+    if (session?.user?.username) { 
       router.push(`/user/${session.user.username}`);
-    } else {
-      // ✅ Go to register if not logged in
+    } else { 
       router.push("/register");
     }
   };

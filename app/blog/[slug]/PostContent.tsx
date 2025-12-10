@@ -7,7 +7,7 @@ import Comments from "@/componenets/Comment"
 import { FaHeart } from "react-icons/fa"
 import { SerializedPost } from "@/lib/posts"
 import BackButton from "@/app/user/[username]/BackButton"
- 
+
 interface PostContentProps {
   post: SerializedPost & { currentUserLiked?: boolean } // 👈
   authorName: string
@@ -16,7 +16,7 @@ interface PostContentProps {
   nextPost: any
 }
 
-// Helper: Split content into blocks and wrap each in a motion div
+
 const AnimatedContent = ({ htmlString }: { htmlString: string }) => {
   const blockTags = ["p", "h2", "h3", "h4", "ul", "ol", "blockquote", "pre", "figure"];
   const regex = /<(p|h2|h3|h4|ul|ol|blockquote|pre|figure)(\s[^>]*)?>([\s\S]*?)<\/\1>/gi;
@@ -25,7 +25,7 @@ const AnimatedContent = ({ htmlString }: { htmlString: string }) => {
 
   while ((match = regex.exec(htmlString)) !== null) {
     if (blockTags.includes(match[1])) {
-      blocks.push(match[0]); // full matched HTML
+      blocks.push(match[0]);
     }
   }
 
@@ -57,9 +57,8 @@ export default function PostContent({
 
   const progressRef = useRef<HTMLDivElement>(null)
 
-  // ✅ likes is a NUMBER (like count), not an array
-  const [likes, setLikes] = useState(post.likes) // ← just the number
-  // ✅ isLiked comes from server-provided boolean
+
+  const [likes, setLikes] = useState(post.likes)
   const [isLiked, setIsLiked] = useState(!!post.currentUserLiked)
   const [hasInteracted, setHasInteracted] = useState(false)
 
@@ -77,45 +76,42 @@ export default function PostContent({
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-const toggleLike = async () => {
+  const toggleLike = async () => {
     console.log("toggleLike called");
-  if (!hasInteracted) setHasInteracted(true)
+    if (!hasInteracted) setHasInteracted(true)
 
-  const newLikedState = !isLiked
-  const optimisticLikesCount = newLikedState ? likes + 1 : likes - 1
+    const newLikedState = !isLiked
+    const optimisticLikesCount = newLikedState ? likes + 1 : likes - 1
 
-  // Optimistic update
-  setIsLiked(newLikedState)
-  setLikes(optimisticLikesCount)
+    setIsLiked(newLikedState)
+    setLikes(optimisticLikesCount)
 
-  try {
-    const res = await fetch("/api/posts/like", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId: post._id }),
-    })
+    try {
+      const res = await fetch("/api/posts/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: post._id }),
+      })
 
-    if (!res.ok) {
-      // Revert on error
+      if (!res.ok) {
+        // Revert on error
+        setIsLiked(!newLikedState)
+        setLikes(likes)
+        return
+      }
+
+      const data = await res.json()
+      setLikes(data.likesCount)
+      setIsLiked(data.liked)
+
+    } catch (err) {
       setIsLiked(!newLikedState)
       setLikes(likes)
-      return
     }
-
-     const data = await res.json()
-    setLikes(data.likesCount)
-    setIsLiked(data.liked)
-
-  } catch (err) {
-    // Revert on network error
-    setIsLiked(!newLikedState)
-    setLikes(likes)
   }
-}
 
   return (
     <>
-      {/* Reading Progress Bar */}
       <div
         className="fixed top-0 left-0 h-1 z-50 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150 ease-out"
         ref={progressRef}
@@ -128,7 +124,6 @@ const toggleLike = async () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Title */}
         <motion.h1
           className="font-serif text-5xl md:text-6xl font-extrabold mb-4 leading-tight"
           initial={{ opacity: 0, y: -10 }}
@@ -138,7 +133,6 @@ const toggleLike = async () => {
           {post.title}
         </motion.h1>
 
-        {/* Subtitle */}
         {post.subtitle && (
           <motion.h2
             className="font-serif text-2xl text-gray-600 dark:text-gray-300 mb-12"
@@ -150,17 +144,16 @@ const toggleLike = async () => {
           </motion.h2>
         )}
 
-        {/* Meta + Like Button */}
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 mb-6">
           <div>
             <span>
-By{" "}
-<Link
-  href={`/user/${post.authorId?.username}`}
-  className="font-medium hover:underline"
->
-  {authorName}
-</Link>
+              By{" "}
+              <Link
+                href={`/user/${post.authorId?.username}`}
+                className="font-medium hover:underline"
+              >
+                {authorName}
+              </Link>
             </span>
             <span className="mx-2">•</span>
             <span>{formattedDate}</span>
@@ -169,24 +162,20 @@ By{" "}
           <button
             onClick={toggleLike}
             aria-label={isLiked ? "Unlike post" : "Like post"}
-            className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${
-              isLiked
-                ? "text-red-500 bg-red-50/20 hover:bg-red-50/30"
-                : "text-gray-500 hover:text-red-500 hover:bg-red-50/10"
-            }`}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${isLiked
+              ? "text-red-500 bg-red-50/20 hover:bg-red-50/30"
+              : "text-gray-500 hover:text-red-500 hover:bg-red-50/10"
+              }`}
           >
             <FaHeart className={isLiked ? "fill-current" : ""} />
-            {/* ✅ Just show the number — no .length! */}
             <span>{hasInteracted ? likes : post.likes}</span>
           </button>
         </div>
 
-        {/* Content */}
         <div className="medium-content prose prose-lg dark:prose-invert">
           <AnimatedContent htmlString={post.content} />
         </div>
 
-        {/* Navigation */}
         <div className="flex justify-between mt-16 border-t border-gray-200 dark:border-gray-700 pt-6 text-sm text-gray-600 dark:text-gray-400">
           {prevPost ? (
             <motion.div whileHover={{ x: -5 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 200 }}>
@@ -208,7 +197,7 @@ By{" "}
         <Comments postId={post._id} />
         <div className="mt-4">
 
-        <BackButton/>
+          <BackButton />
         </div>
       </motion.article>
     </>

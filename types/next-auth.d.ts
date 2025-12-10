@@ -13,6 +13,13 @@ declare module "next-auth" {
     id: string;
     email: string;
     username: string;
+    bio: string
+    avatar: string
+    isDeleted: boolean
+    followers: string[]  // ✅ string[], not ObjectId[]
+    following: string[]  // ✅ string[], not ObjectId[]
+    createdAt: string
+    updatedAt: string
   }
 }
 

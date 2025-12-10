@@ -1,5 +1,3 @@
-// lib/posts.ts
-
 import Post from "@/models/postmodel";
 import { connectDB } from "./db";
 
@@ -37,20 +35,19 @@ function serializePost(post: any): SerializedPost | null {
         likes: Array.isArray(post.likes) ? post.likes.length : 0,
     }
 }
- 
-export async function getAllPosts(limit?: number) {
-  await connectDB();
-  let query = Post.find()
-    .populate("authorId", "username isDeleted") 
-    .sort({ createdAt: -1 });
-  if (limit) query = query.limit(limit);
-  const posts = await query.lean();
 
-  // 👇 FILTER OUT DELETED AUTHORS
-  return posts
-    .filter(post => !post.authorId?.isDeleted)
-    .map(serializePost)
-    .filter((p): p is SerializedPost => p !== null);
+export async function getAllPosts(limit?: number) {
+    await connectDB();
+    let query = Post.find()
+        .populate("authorId", "username isDeleted")
+        .sort({ createdAt: -1 });
+    if (limit) query = query.limit(limit);
+    const posts = await query.lean();
+
+    return posts
+        .filter(post => !post.authorId?.isDeleted)
+        .map(serializePost)
+        .filter((p): p is SerializedPost => p !== null);
 }
 
 export async function getPostBySlug(slug: string) {
@@ -84,13 +81,11 @@ export async function deletePost(id: string) {
     return await Post.findOneAndDelete({ _id: id });
 }
 
-// ✅ Raw post fetcher (for auth logic)
 export async function getRawPostBySlug(slug: string) {
     await connectDB()
     return await Post.findOne({ slug }).populate("authorId", "username").exec()
 }
 
-// ✅ Safe serialization for client (likes as number)
 export function serializeForClient(post: any): SerializedPost {
     if (!post) return null as any
     return {
