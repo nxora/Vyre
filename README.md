@@ -1,3 +1,5 @@
+<img src="public/Screenshot 2025-12-09 122842.png" style="margin-left: 15em" />
+
 <p align="center">
   <h1 align="center">Vyre</h1>
   <p align="center">
@@ -154,3 +156,4 @@ git commit -m "Added your amazing feature"
 🚀 Push and open a pull request!
 
 ### Made with 💖 by [Nexora](https://github.com/davex-ai)
+<img src="public/vyre-banner.png" style="margin-left: 15em" />
