@@ -1,9 +1,12 @@
 // app/api/user/[id]/follow/route.ts
+export const runtime = "nodejs";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/db";
 import User from "@/models/usermodel";
-import { Types } from "mongoose"; // ✅ Import Types
+import mongoose, { Types } from "mongoose"; // ✅ Import Types
+import { revalidatePath } from "next/cache";
 
 function jsonError(message: string, status = 401) {
   return new Response(JSON.stringify({ error: message }), {
@@ -47,36 +50,51 @@ export async function POST(
   if (!session?.user?.id) {
     return jsonError("Authentication required", 401);
   }
+  console.log("session.user:", session.user);
 
-  // Validate IDs
-  if (!isValidObjectId(id) || !isValidObjectId(session.user.id)) {
+
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(session.user.id)) {
     return jsonError("Invalid user ID", 400);
   }
 
-  const currentUserId = session.user.id; // string
-  const targetUserId = id; // string
-
   await connectDB();
+
+  const currentUserId = new Types.ObjectId(session.user.id);
+  const targetUserId = new Types.ObjectId(id);
 
   const targetUser = await User.findById(targetUserId);
   if (!targetUser) return jsonError("User not found", 404);
 
-  // Safely extract followers as string array
-  const followers = Array.isArray(targetUser.followers)
-    ? targetUser.followers.map(String)
-    : [];
-
-  const isCurrentlyFollowing = followers.includes(currentUserId);
+  const isCurrentlyFollowing = targetUser.followers?.some(
+    (fid: Types.ObjectId) => fid.equals(currentUserId)
+  );
 
   if (isCurrentlyFollowing) {
-    // Unfollow
-    await User.findByIdAndUpdate(targetUserId, { $pull: { followers: currentUserId } });
-    await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetUserId } });
-    return Response.json({ isFollowing: false });
+    await User.updateOne(
+      { _id: targetUserId },
+      { $pull: { followers: currentUserId } }
+    );
+    await User.updateOne(
+      { _id: currentUserId },
+      { $pull: { following: targetUserId } }
+    );
   } else {
-    // Follow
-    await User.findByIdAndUpdate(targetUserId, { $addToSet: { followers: currentUserId } });
-    await User.findByIdAndUpdate(currentUserId, { $addToSet: { following: targetUserId } });
-    return Response.json({ isFollowing: true });
+    await User.updateOne(
+      { _id: targetUserId },
+      { $addToSet: { followers: currentUserId } }
+    );
+    await User.updateOne(
+      { _id: currentUserId },
+      { $addToSet: { following: targetUserId } }
+    );
   }
+  revalidatePath(`/user/${targetUser.username}`);
+console.log("✅ Follow operation completed");
+
+// Verify the update worked:
+const updatedTarget = await User.findById(targetUserId).select('followers');
+const updatedCurrent = await User.findById(currentUserId).select('following');
+console.log("Target followers:", updatedTarget.followers);
+console.log("Current following:", updatedCurrent.following);
+  return Response.json({ isFollowing: !isCurrentlyFollowing });
 }

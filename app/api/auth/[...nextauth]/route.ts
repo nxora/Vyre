@@ -58,7 +58,7 @@ export const authOptions: AuthOptions = {
     const dbUser = await User.findById(token.id)
     if (!dbUser) {
       console.log(`User ${token.id} deleted — invalidating session`)
-      throw new Error("User not found") //  
+      throw new Error("User not found") 
     }
   }
 

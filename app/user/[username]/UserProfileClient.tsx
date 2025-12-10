@@ -34,19 +34,26 @@ export default function UserProfileClient({
       
         const [localFollowersCount, setLocalFollowersCount] = useState(user.followers?.length ?? 0);
   const [localIsFollowing, setLocalIsFollowing] = useState(false);
-
-  useEffect(() => {
-    if (!isMe && isLoggedIn) {
-      const check = async () => {
+  // ✅ Fixed useEffect
+useEffect(() => {
+  // Only fetch if logged in AND not viewing self
+  if (isLoggedIn && !isMe && user._id) {
+    const check = async () => {
+      try {
         const res = await fetch(`/api/user/${user._id}/follow`);
         if (res.ok) {
           const { isFollowing } = await res.json();
           setLocalIsFollowing(isFollowing);
         }
-      };
-      check();
-    }
-  }, [user._id, isMe, isLoggedIn]);
+        // If not ok (e.g., 401), that's fine — just leave as false
+      } catch (err) {
+        console.error("Failed to fetch follow status", err);
+      }
+    };
+    check();
+  }
+}, [user._id, isMe, isLoggedIn]);
+ 
 
   const handleFollowToggle = (isNowFollowing: boolean) => {
     setLocalIsFollowing(isNowFollowing);
@@ -177,7 +184,7 @@ export default function UserProfileClient({
             className="mt-2"
           >
  {!isMe && isLoggedIn && (
-  <FollowButton targetUserId={user._id} onToggle={handleFollowToggle }/>//bug
+  <FollowButton targetUserId={user._id} onToggle={handleFollowToggle }/>
 )}         </motion.div>
         )}
       </motion.div>

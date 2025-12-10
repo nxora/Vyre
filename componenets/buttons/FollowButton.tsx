@@ -52,7 +52,7 @@ export default function FollowButton({ targetUserId, onToggle }: { targetUserId:
       }
 
       setIsFollowing(data.isFollowing);
-      onToggle?.(data.isFollowing);//this exprssion isnt callable
+      onToggle?.(data.isFollowing); 
     } catch (err) {
       console.error("Follow failed:", err);
       alert("Something went wrong. Please try again.");
