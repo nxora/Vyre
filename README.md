@@ -125,8 +125,8 @@ Bonus:
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/dave-ai/furreal-facts.git
-cd furreal-facts
+git clone https://github.com/davex-ai/Vyre.git
+cd vyre
 
 2️⃣ Install Dependencies
 
